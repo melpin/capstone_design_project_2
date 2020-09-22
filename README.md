@@ -12,7 +12,7 @@ ai_entropy.py(ember entropy code) : 기본 내장 라이브러리 외에 설치�
 => pip install sklearn  
 => python -m pip install --upgrade pip 도 한번 해주세요~  
 
-richheader.py
-if RichHeader Not Found return 0
-if Checksum Not Equal return -1
-etc return rich_pids
+richheader.py   
+if RichHeader Not Found return 0    
+if Checksum Not Equal return -1   
+etc return rich_pids    
