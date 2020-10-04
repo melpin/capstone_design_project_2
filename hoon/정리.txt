@@ -1,0 +1,6 @@
+
+analysis - ember구조 중에 class GeneralFileInfo(FeatureType): 과 class HeaderFileInfo(FeatureType): 부분에서 PE 어디 변수들을 사용하는거 체크 한 파일 ( 실제 소스 X)
+
+pefile - PE 헤더부분 변수들이 있음 그래서 이 함수를 이용하면 ember에 필요한 변수를 추출할수 있음 (class PE 부분에 변수명이 있다.)
+
+test - pefile 부분을 활용한 예시 
