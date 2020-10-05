@@ -1,8 +1,8 @@
 
-#lief package install method
-#not pip install lief < not running
-pip install --index-url  https://lief-project.github.io/packages lief
-
+#lief package install method  
+#not pip install lief < not running  
+pip install --index-url  https://lief-project.github.io/packages lief  
+  
 malware detection with ai
 
 module decryption
