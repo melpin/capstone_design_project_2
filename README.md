@@ -20,4 +20,8 @@ ai_entropy.py(ember entropy code) : 기본 내장 라이브러리 외에 설치�
 richheader.py   
 if RichHeader Not Found return 0    
 if Checksum Not Equal return -1   
-etc return rich_pids    
+etc return rich_pids   
+
+richheaderv.2.py
+return list sizeof 271
+each key is Rich_pid, value is cnt and last key's value is error code
