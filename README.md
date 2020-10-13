@@ -18,10 +18,8 @@ ai_entropy.py(ember entropy code) : 기본 내장 라이브러리 외에 설치�
 => python -m pip install --upgrade pip 도 한번 해주세요~  
 
 richheader.py   
-if RichHeader Not Found return 0    
-if Checksum Not Equal return -1   
-etc return rich_pids   
+sample directory의 파일들로부터 추출한 richheader count & pid를 richd.csv 형태로 출력  
+with richlibrary.py, prodids.py  
 
-richheaderv.2.py  
-return list sizeof 271  
-each key is Rich_pid, value is cnt and last key's value is error code
+ngram.py   
+sample directory의 파일들로부터 추출한 segment count & 4-gram opcodes를 4-gram.csv 형태로 출력  
