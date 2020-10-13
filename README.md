@@ -18,8 +18,8 @@ ai_entropy.py(ember entropy code) : 기본 내장 라이브러리 외에 설치�
 => python -m pip install --upgrade pip 도 한번 해주세요~  
 
 richheader.py   
-sample directory의 파일들로부터 추출한 richheader count & pid를 richd.csv 형태로 출력  
+sample directory의 파일들로부터 추출한 richheader count & pid를 richd.csv로 출력  
 with richlibrary.py, prodids.py  
 
 ngram.py   
-sample directory의 파일들로부터 추출한 segment count & 4-gram opcodes를 4-gram.csv 형태로 출력  
+sample directory의 파일들로부터 추출한 segment count & 4-gram opcodes를 4-gram.csv로 출력  
