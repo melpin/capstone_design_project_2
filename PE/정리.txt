@@ -8,6 +8,8 @@ test - pefile 부분을 활용한 예시
 
 # PyPackerDetect-master 설명 
 
+실행 방법은 python(or py 아마 버젼따라 다른거 같음) DetectPacker.py file 라고 치면 됩니다. 
+
 pip install pefile 
 
 PyPackerDetect-master\deps\libpefile 에 pefile과 pe utils 있음 
