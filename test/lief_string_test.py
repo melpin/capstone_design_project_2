@@ -144,6 +144,7 @@ class PEFeatureExtractor(object):
                 print(f"WARNING:   in the feature calculations.")
         else:
             raise Exception(f"EMBER feature version must be 1 or 2. Not {feature_version}")
+        print("no run?")
         self.dim = sum([fe.dim for fe in self.features])
 
     def raw_features(self, bytez):
@@ -159,6 +160,9 @@ class PEFeatureExtractor(object):
 
         features = {"sha256": hashlib.sha256(bytez).hexdigest()}
         features.update({fe.name: fe.raw_features(bytez, lief_binary) for fe in self.features})
+        for k, v in features.items():
+            print(k, v)
+        
         return features
 
     def process_raw_features(self, raw_obj):
@@ -183,9 +187,11 @@ if __name__ == "__main__":
     print("run main")
     path = "C:\\Users\\melpin5378\\Desktop\\python_test\\test_bin\\HxD.exe"
     if os.path.exists(path):
+        print("read file")
         file_data = open(path, "rb").read()
+        print("train start")
         final_features = running_sample(file_data)
-        
+        #print(final_features)
     else:
         print("{} does not exist".format(path))
             
