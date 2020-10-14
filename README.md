@@ -1,6 +1,7 @@
 
 #lief package install method  
 #not pip install lief < not running  
+pip install --index-url  https://lief-project.github.io/packages lief  
 https://github.com/lief-project/LIEF/releases  
 lief 0.9.0 version install  
   
