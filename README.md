@@ -24,3 +24,17 @@ with richlibrary.py, prodids.py
 
 ngram.py   
 sample directory의 파일들로부터 추출한 segment count & 4-gram opcodes를 4-gram.csv로 출력  
+  
+  
+(image)  
+get_image.py  
+해당 코드는 아래와 같이 경로를 만들어주어야 실행 가능
+'../samples/malware/'  
+'../samples/normal/'  
+'../images/malware/'  
+'../images/normal/'  
+  
+get_image_modeling_v2.py  
+tensorflow-cpu 최신버전에서 사용가능  
+코드를 Tensorflow 1.x 버전에서 Tensorflow 2.x 버전으로 변경하고 싶으면 명령어 창에 아래와 같이 작성  
+=> tf_upgrade_v2 --infile (origin_file.py) --outfile (after_file.py)
