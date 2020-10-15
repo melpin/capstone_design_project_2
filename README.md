@@ -28,7 +28,7 @@ sample directory의 파일들로부터 추출한 segment count & 4-gram opcodes�
   
 (image)  
 get_image.py  
-해당 코드는 아래와 같이 경로를 만들어주어야 실행 가능
+해당 코드는 아래와 같이 경로를 만들어주어야 실행 가능  
 '../samples/malware/'  
 '../samples/normal/'  
 '../images/malware/'  
