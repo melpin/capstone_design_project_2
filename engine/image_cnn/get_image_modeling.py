@@ -6,6 +6,7 @@ pip install tensorflow
 pip install keras
 pip install numpy
 pip install Pillow
+1 버전에서 사용되어 굳이 2버전을 쓸 수 있는 상황에서는 사용할 필요가 
 '''
 
 
