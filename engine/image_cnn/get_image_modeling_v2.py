@@ -1,5 +1,6 @@
 # tf_upgrade_v2 --infile tensorfoo.py --outfile tensorfoo-upgraded.py
 # pip install tensorflow-cpu
+# 모델 학습 후 맨 아래 쪽에서 "epoch"수 만큼 train 하고, "# Test model and check accuracy"에서 말그대로 test accuracy를 return 한다.
 
 import tensorflow as tf
 import numpy as np
