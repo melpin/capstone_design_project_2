@@ -1,3 +1,7 @@
+'''
+동적 이미지화시 사용 
+'''
+
 import os,sys
 from PIL import Image
 
