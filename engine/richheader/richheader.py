@@ -12,6 +12,7 @@ import operator
 import os
 import traceback
 from itertools import chain
+import numpy as np
 
 # imports for rich
 import richlibrary
@@ -118,43 +119,43 @@ def main():
     nor_path = '../../samples/normal/'
     output_file = "./richd.csv"
 
-    print('[*] Extracting ngram patterns from files')
+    #print('[*] Extracting ngram patterns from files')
 
     ef = RichHeader_features(output_file)
     i = 0
 
     for file in os.listdir(mal_path):
         i += 1
-        print("%d file processd (%s), " % (i, file))
+        #print("%d file processd (%s), " % (i, file))
         file = mal_path + file
         rich_g = ef.get_rich_parser(file)
 
         richs = ef.richs(rich_g, 1)
-        print("%d rich_pids extracted" % (len(richs)))
+        #print("%d rich_pids extracted" % (len(richs)))
 
-    print("- Malware Completed")
+    #print("- Malware Completed")
     print(richs)
 
     for file in os.listdir(nor_path):
         i += 1
-        print("%d file processd (%s), " % (i, file))
+        #print("%d file processd (%s), " % (i, file))
         # file = nor_path + file
         file = "C:\\WINDOWS\\system32\\notepad.exe"
         rich_g = ef.get_rich_parser(file)
 
         richs = ef.richs(rich_g, 1)
-        print("%d rich_pids extracted" % (len(richs)))
+        #print("%d rich_pids extracted" % (len(richs)))
 
-    print("- Normal Complated")
-    print(richs)
-    print("[*] Total length of rich_pid list :", len(richs))
+    #print("- Normal Complated")
+    print("richs : ",richs)
+    #print("[*] Total length of rich_pid list :", len(richs))
     num_of_features = len(richs)
 
     sorted_x = sorted(richs.items(), key=operator.itemgetter(1), reverse=True)
-    print("[*] Using %s richs as features" % num_of_features)
+    #print("[*] Using %s richs as features" % num_of_features)
     features = sorted_x[0:num_of_features]
     headers = list(chain.from_iterable(zip(*features)))[0:num_of_features]
-    ef.write_csv_header(headers)
+    #ef.write_csv_header(headers)
     print(features)
     print("#" * 80)
 
@@ -171,7 +172,14 @@ def main():
         hash_ = ef.getMD5(filepath)
         all_data = [file, hash_]
         all_data.extend(rich_count)
-        ef.write_csv_data(all_data)
+        #ef.write_csv_data(all_data)
+        rf = all_data[2:-1]
+        counts = np.array(rf, dtype=np.float32)
+        sums = counts.sum()
+        normalized = counts / sums
+        print("sum and normal val : ", sums, normalized)
+        
+        
 
     for file in os.listdir(nor_path):
         i += 1

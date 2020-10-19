@@ -24,3 +24,15 @@ with richlibrary.py, prodids.py
 
 ngram.py   
 sample directory의 파일들로부터 추출한 segment count & 4-gram opcodes를 4-gram.csv로 출력  
+
+
+# PyPackerDetect-master  
+pip install pefile  
+
+peutils 408 line #  encode cp-949 > utf8 modify
+
+                   sig_f =open(filename, 'rt', encoding='UTF8')
+                    #sig_f = open( filename, 'rt' )
+
+ref https://github.com/cylance/PyPackerDetect
+

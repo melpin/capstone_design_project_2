@@ -1,3 +1,55 @@
+"""
+import numpy as np
+
+import mmap
+import engine.PyPackerDetect.DetectPacker
+
+
+class PackerExtractor(FeatureType):
+    ''' Extracts doubt packer count '''
+
+    name = 'Packer'
+    dim = 1 + 1
+
+    def __init__(self):
+        super(FeatureType, self).__init__()
+
+    def raw_features(self, bytez, lief_binary):
+        filepath = ["./samples/normal/notepad.exe"]
+        
+        report = engine.PyPackerDetect.DetectPacker.CheckForPackersInMemory(bytez)
+        
+        return {
+            'detections': report.detections,
+            'suspicions': report.suspicions
+        }
+
+    def process_raw_features(self, raw_obj):
+        return np.hstack([raw_obj['detections'], raw_obj['suspicions']]).astype(np.float32)
+
+
+
+#directory check
+filepath = ["./samples/normal/notepad.exe"]
+
+reports = engine.PyPackerDetect.DetectPacker.CheckForPackers(filepath)
+
+for file, report in reports.items():
+    print(report.detections, report.suspicions)
+
+
+fd = open(filepath[0], 'rb')
+test = fd.read()
+
+reports = engine.PyPackerDetect.DetectPacker.CheckForPackersInMemory(test)
+print(reports.detections)
+
+#reports = CheckForPackers(filepath)
+#print(reports)
+# config, default valuepefile 
+
+"""
+
 import re
 import lief
 import hashlib
@@ -145,7 +197,7 @@ class PEFeatureExtractor(object):
                 print(f"WARNING:   in the feature calculations.")
         else:
             raise Exception(f"EMBER feature version must be 1 or 2. Not {feature_version}")
-        print("no run?")
+        
         self.dim = sum([fe.dim for fe in self.features])
 
     def raw_features(self, bytez):
@@ -183,7 +235,6 @@ def running_sample(file_data, feature_version=2):
     return features
 
 import engine.PyPackerDetect.DetectPacker
-
 
 class PackerExtractor(FeatureType):
     ''' Extracts doubt packer count '''
