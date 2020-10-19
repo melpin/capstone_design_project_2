@@ -58,8 +58,8 @@ get_image.py와 같이 경로를 만들어 주어야 파일을 찾을 수 있도
 <code>
 Project
   ㄴㅡㅡ samples  
-        ㄴㅡㅡ malwares  
-        ㄴㅡㅡ normal  
+      ㄴㅡㅡ malwares  
+      ㄴㅡㅡ normal  
   ㄴㅡㅡ images  
       ㄴㅡㅡ malwares  
       ㄴㅡㅡ normal  
