@@ -1,7 +1,0 @@
-        rf = all_data[2:-1]
-        counts = np.array(rf, dtype=np.float32)
-        sums = counts.sum()
-        normalized = counts / sums
-        print("sum and normal val : ", sums, normalized)
-
-<< rich header data normalize routine,     np float 32 return

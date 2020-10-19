@@ -18,7 +18,10 @@ import hashlib
 import time
 import numpy as np
 from sklearn.feature_extraction import FeatureHasher
+
+#add user engine
 import engine.PyPackerDetect.DetectPacker
+from engine.richheader import richlibrary
 
 LIEF_MAJOR, LIEF_MINOR, _ = lief.__version__.split('.')
 LIEF_EXPORT_OBJECT = int(LIEF_MAJOR) > 0 or ( int(LIEF_MAJOR)==0 and int(LIEF_MINOR) >= 10 )
@@ -504,6 +507,64 @@ class PackerExtractor(FeatureType):
     def process_raw_features(self, raw_obj):
         return np.hstack([raw_obj['detections'], raw_obj['suspicions']]).astype(np.float32)
 
+
+class RichHeader_features(FeatureType):
+    ''' Extracts doubt packer count '''
+    name = 'richheader'
+    dim = 271
+    
+    def __init__(self):
+        super(FeatureType, self).__init__()
+    
+    def get_rich_data(self, filedata):
+        rich_parser = richlibrary.RichLibrary(bytez = filedata)
+        error = 0
+        rich_data = {'error': 0, 'cmpids': [{'mcv': 0, 'pid': 0, 'cnt': 0}], 'csum_calc': 0, 'csum_file': 0, 'offset': 0}
+        try:
+            rich_data = rich_parser.parse()
+        except richlibrary.FileSizeError:
+            error = -2
+        except richlibrary.MZSignatureError:
+            error = -3
+        except richlibrary.MZPointerError:
+            error = -4
+        except richlibrary.PESignatureError:
+            error = -5
+        except richlibrary.RichSignatureError:
+            error = -6
+        except richlibrary.DanSSignatureError:
+            error = -7
+        except richlibrary.HeaderPaddingError:
+            error = -8
+        except richlibrary.RichLengthError:
+            error = -9
+        except Exception as e:
+            print(e)
+        rich_data['error'] = error
+        return rich_data
+    
+    def raw_features(self, bytez, lief_binary):
+        rich_data = self.get_rich_data(bytez)
+        rich_dict = dict()
+        for i in range(1, self.dim):
+            rich_dict[i] = 0;
+
+        if(rich_data['error'] < 0):
+            rich_dict['error'] = rich_data['error']
+            return rich_dict
+
+
+        for lis in rich_data['cmpids']:
+            rich_dict[lis['pid']] = lis['cnt']
+            
+        return rich_dict
+
+    def process_raw_features(self, raw_obj):
+        raw_list = [raw_obj[i] for i in range (1, self.dim)]
+        raw_list.append(raw_obj['error'])
+        
+        return np.hstack(raw_list).astype(np.float32)
+
 def GenerateTime(lief_binary):
     fileheader = lief_binary.header
     timestamp = time.gmtime(fileheader.time_date_stamps)
@@ -528,7 +589,7 @@ class PEFeatureExtractor(object):
         except Exception:  # everything else (KeyboardInterrupt, SystemExit, ValueError):
             raise
 
-        features = {"appeared" : GenerateTime(lief_binary)} #appeared
+        features = {"appeared" : GenerateTime(lief_binary)} #data time stamp appeared
         features.update({fe.name: fe.raw_features(bytez, lief_binary) for fe in self.features})
 
         return features

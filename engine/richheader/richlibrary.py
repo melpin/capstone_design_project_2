@@ -50,6 +50,8 @@ def err2str(code):
         }[code]
 
 class RichLibrary:
+    
+        
 
     def __u32(self, x):
         return struct.unpack("<I", x)[0]
@@ -76,7 +78,10 @@ class RichLibrary:
         return csum & 0xffffffff
 
     def parse(self):
-        dat = bytearray(open(self.fname, 'rb').read()[:0x1000])
+        if self.bytez == None:
+            dat = bytearray(open(self.fname, 'rb').read()[:0x1000])
+        else:
+            dat = bytearray(self.bytez[:0x1000])
 
         ## Do basic sanity checks on the PE
         dat_len = len(dat)
@@ -171,9 +176,11 @@ class RichLibrary:
             "0x{:08x})".format(data['csum_calc'], data['csum_file']))
         print("\x1b[39m" + "-" * (20 + 16 + 16 + 32 + 39))
 
-    def __init__(self, path):
+    def __init__(self, path = None, bytez = None):
         self.data = {}
         self.SIZE_DOS_HEADER = 0x40
         self.POS_E_LFANEW = 0x3c
 
         self.fname = path
+        self.bytez = bytez
+        

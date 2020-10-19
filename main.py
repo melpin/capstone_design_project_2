@@ -181,8 +181,9 @@ class PEFeatureExtractor(object):
 
     def __init__(self, feature_version=2):
         self.features = [
-            StringExtractor(),
-            PackerExtractor()
+            #StringExtractor(),
+            PackerExtractor(),
+            RichHeader_features()
         ]
         if feature_version == 1:
             if not lief.__version__.startswith("0.8.3"):
@@ -213,8 +214,10 @@ class PEFeatureExtractor(object):
 
         features = {"sha256": hashlib.sha256(bytez).hexdigest()}
         features.update({fe.name: fe.raw_features(bytez, lief_binary) for fe in self.features})
+        
+        #debug print
         for k, v in features.items():
-            print(k, v)
+            print(k, v) # print data label name, value
         
         return features
 
@@ -225,14 +228,7 @@ class PEFeatureExtractor(object):
     def feature_vector(self, bytez):
         return self.process_raw_features(self.raw_features(bytez))
 
-
-def running_sample(file_data, feature_version=2):
-    """
-    Predict a PE file with an LightGBM model
-    """
-    extractor = PEFeatureExtractor(feature_version)
-    features = np.array(extractor.feature_vector(file_data), dtype=np.float32)
-    return features
+#add module
 
 import engine.PyPackerDetect.DetectPacker
 
@@ -256,7 +252,73 @@ class PackerExtractor(FeatureType):
     def process_raw_features(self, raw_obj):
         return np.hstack([raw_obj['detections'], raw_obj['suspicions']]).astype(np.float32)
 
+from engine.richheader import richlibrary
 
+class RichHeader_features(FeatureType):
+    ''' Extracts doubt packer count '''
+    name = 'richheader'
+    dim = 271
+    
+    def __init__(self):
+        super(FeatureType, self).__init__()
+    
+    def get_rich_data(self, filedata):
+        rich_parser = richlibrary.RichLibrary(bytez = filedata)
+        error = 0
+        rich_data = {'error': 0, 'cmpids': [{'mcv': 0, 'pid': 0, 'cnt': 0}], 'csum_calc': 0, 'csum_file': 0, 'offset': 0}
+        try:
+            rich_data = rich_parser.parse()
+        except richlibrary.FileSizeError:
+            error = -2
+        except richlibrary.MZSignatureError:
+            error = -3
+        except richlibrary.MZPointerError:
+            error = -4
+        except richlibrary.PESignatureError:
+            error = -5
+        except richlibrary.RichSignatureError:
+            error = -6
+        except richlibrary.DanSSignatureError:
+            error = -7
+        except richlibrary.HeaderPaddingError:
+            error = -8
+        except richlibrary.RichLengthError:
+            error = -9
+        except Exception as e:
+            print(e)
+        rich_data['error'] = error
+        return rich_data
+    
+    def raw_features(self, bytez, lief_binary):
+        rich_data = self.get_rich_data(bytez)
+        rich_dict = dict()
+        for i in range(1, self.dim):
+            rich_dict[i] = 0;
+
+        if(rich_data['error'] < 0):
+            rich_dict['error'] = rich_data['error']
+            return rich_dict
+
+
+        for lis in rich_data['cmpids']:
+            rich_dict[lis['pid']] = lis['cnt']
+            
+        return rich_dict
+
+    def process_raw_features(self, raw_obj):
+        raw_list = [raw_obj[i] for i in range (1, self.dim)]
+        raw_list.append(raw_obj['error'])
+        
+        return np.hstack(raw_list).astype(np.float32)
+
+
+def running_sample(file_data, feature_version=2):
+    """
+    Predict a PE file with an LightGBM model
+    """
+    extractor = PEFeatureExtractor(feature_version)
+    features = np.array(extractor.feature_vector(file_data), dtype=np.float32)
+    return features
 
 
 if __name__ == "__main__":
