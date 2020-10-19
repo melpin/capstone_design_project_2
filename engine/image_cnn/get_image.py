@@ -2,6 +2,7 @@
 pip install imageio
 pip install numpy
 pip install PIL
+정적 이미지화 시 
 '''
 
 import numpy as np

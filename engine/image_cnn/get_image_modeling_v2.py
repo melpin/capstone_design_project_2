@@ -1,14 +1,6 @@
-'''
-tensorflow -> Microsoft Visual C++ 2015 Redistributable Update 3
-tensorflow GPU 사용 시 - CUDA, cuDNN
-CUDA - https://developer.nvidia.com/cuda-toolkit-archive -> CUDA Toolkit 10.1
-pip install tensorflow
-pip install keras
-pip install numpy
-pip install Pillow
-1 버전에서 사용되어 굳이 2버전을 쓸 수 있는 상황에서는 사용할 필요가 
-'''
-
+# tf_upgrade_v2 --infile tensorfoo.py --outfile tensorfoo-upgraded.py
+# pip install tensorflow-cpu
+# 모델 학습 후 맨 아래 쪽에서 "epoch"수 만큼 train 하고, "# Test model and check accuracy"에서 말그대로 test accuracy를 return 한다.
 
 import tensorflow as tf
 import numpy as np
@@ -17,7 +9,6 @@ import glob
 
 from PIL import Image
 from keras.utils import np_utils
-
 
 class CNN_tensor():
 
@@ -107,45 +98,45 @@ class CNN_tensor():
     learning_rate = 0.001
     training_epochs = 30
     batch_size = 100
-    keep_prob = tf.placeholder(tf.float32)
+    keep_prob = tf.compat.v1.placeholder(tf.float32)
 
     # input place holders
-    X = tf.placeholder(tf.float32, [None, 28, 28 ,1])
-    Y = tf.placeholder(tf.float32, [None, 2])  
+    X = tf.compat.v1.placeholder(tf.float32, [None, 28, 28 ,1])
+    Y = tf.compat.v1.placeholder(tf.float32, [None, 2])  
 
-    W1 = tf.Variable(tf.random_normal([3, 3, 1, 32], stddev=0.01))
-    L1 = tf.nn.conv2d(X, W1, strides=[1, 1, 1, 1], padding='SAME')
+    W1 = tf.Variable(tf.random.normal([3, 3, 1, 32], stddev=0.01))
+    L1 = tf.nn.conv2d(input=X, filters=W1, strides=[1, 1, 1, 1], padding='SAME')
     L1 = tf.nn.relu(L1)
-    L1 = tf.nn.max_pool(L1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
-    L1 = tf.nn.dropout(L1, keep_prob=keep_prob)
+    L1 = tf.nn.max_pool2d(input=L1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+    L1 = tf.nn.dropout(L1, rate=1 - (keep_prob))
 
-    W2 = tf.Variable(tf.random_normal([3, 3, 32, 64], stddev=0.01))
-    L2 = tf.nn.conv2d(L1, W2, strides=[1, 1, 1, 1], padding='SAME')
+    W2 = tf.Variable(tf.random.normal([3, 3, 32, 64], stddev=0.01))
+    L2 = tf.nn.conv2d(input=L1, filters=W2, strides=[1, 1, 1, 1], padding='SAME')
     L2 = tf.nn.relu(L2)
-    L2 = tf.nn.max_pool(L2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
-    L2 = tf.nn.dropout(L2, keep_prob=keep_prob)
+    L2 = tf.nn.max_pool2d(input=L2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+    L2 = tf.nn.dropout(L2, rate=1 - (keep_prob))
 
-    W3 = tf.Variable(tf.random_normal([3, 3, 64, 128], stddev=0.01))
-    L3 = tf.nn.conv2d(L2, W3, strides=[1, 1, 1, 1], padding='SAME')
+    W3 = tf.Variable(tf.random.normal([3, 3, 64, 128], stddev=0.01))
+    L3 = tf.nn.conv2d(input=L2, filters=W3, strides=[1, 1, 1, 1], padding='SAME')
     L3 = tf.nn.relu(L3)
-    L3 = tf.nn.max_pool(L3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
-    L3 = tf.nn.dropout(L3, keep_prob=keep_prob)
+    L3 = tf.nn.max_pool2d(input=L3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+    L3 = tf.nn.dropout(L3, rate=1 - (keep_prob))
     L3_flat = tf.reshape(L3, [-1, 128 * 4 * 4])
 
-    W4 = tf.get_variable("W4", shape=[128 * 4 * 4, 625], initializer=tf.contrib.layers.xavier_initializer())
-    b4 = tf.Variable(tf.random_normal([625]))
+    W4 = tf.compat.v1.get_variable("W4", shape=[128 * 4 * 4, 625], initializer=tf.compat.v1.keras.initializers.VarianceScaling(scale=1.0, mode="fan_avg", distribution="uniform"))
+    b4 = tf.Variable(tf.random.normal([625]))
     L4 = tf.nn.relu(tf.matmul(L3_flat, W4) + b4)
-    L4 = tf.nn.dropout(L4, keep_prob=keep_prob)
+    L4 = tf.nn.dropout(L4, rate=1 - (keep_prob))
 
-    W5 = tf.get_variable("W5", shape=[625, 2], initializer=tf.contrib.layers.xavier_initializer())
-    b5 = tf.Variable(tf.random_normal([2]))
+    W5 = tf.compat.v1.get_variable("W5", shape=[625, 2], initializer=tf.compat.v1.keras.initializers.VarianceScaling(scale=1.0, mode="fan_avg", distribution="uniform"))
+    b5 = tf.Variable(tf.random.normal([2]))
     logits = tf.matmul(L4, W5) + b5
 
-    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits, labels=Y))
-    optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
+    cost = tf.reduce_mean(input_tensor=tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=Y))
+    optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 
-    sess = tf.Session()
-    sess.run(tf.global_variables_initializer())
+    sess = tf.compat.v1.Session()
+    sess.run(tf.compat.v1.global_variables_initializer())
 
     print('Learning started. It takes sometime.')
     for epoch in range(training_epochs):
@@ -167,8 +158,8 @@ class CNN_tensor():
     print('Learning Finished!')
 
     # Test model and check accuracy
-    correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(Y, 1))
-    accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+    correct_prediction = tf.equal(tf.argmax(input=logits, axis=1), tf.argmax(input=Y, axis=1))
+    accuracy = tf.reduce_mean(input_tensor=tf.cast(correct_prediction, tf.float32))
     acc = sess.run(accuracy, feed_dict={X: self.x_test, Y: self.y_test, keep_prob: 1})
 
     return acc
