@@ -1,4 +1,5 @@
-# tf_upgrade_v2 --infile tensorfoo.py --outfile tensorfoo-upgraded.py
+# if you want know tensorflow 1.x -> tensorflow 2.x 
+# tf_upgrade_v2 --infile (originfile.py) --outfile (afterfile.py)
 # pip install tensorflow-cpu
 # 모델 학습 후 맨 아래 쪽에서 "epoch"수 만큼 train 하고, "# Test model and check accuracy"에서 말그대로 test accuracy를 return 한다.
 
@@ -11,26 +12,29 @@ from PIL import Image
 from keras.utils import np_utils
 
 class CNN_tensor():
-
+    # image 가져오기
   def load_images(self):
 
     nb_classes = 2
 
+    # 정상 프로그램 이미지 목록을 받아옴
     b = glob.glob('../images/normal/*thumb.png')
     total_len = len(b)
     BEN_TRAIN = int(round(total_len * 0.8))
     BEN_TEST = total_len - BEN_TRAIN
 
+    # 정상 프로그램 이미지를 저장할 자료형 정의
     X_train_benign = np.empty((BEN_TRAIN, 28, 28, 1), dtype = "float32")
     y_train_benign = np.empty((BEN_TRAIN,), dtype = "uint8")
     X_test_benign = np.empty((BEN_TEST, 28, 28, 1), dtype = "float32")
     y_test_benign = np.empty((BEN_TEST,), dtype = "uint8")
     cnt = 0
 
+    # 이미지를 불러온 후 크기를 28 x 28로 조정
     for i in b:
       im = Image.open(i).convert("L")
-      out = im.resize((28,28))
-  
+      out = im.resize((28,28)) 
+    
       if cnt < BEN_TRAIN: 
         X_train_benign[cnt,:,:,0] = out
         y_train_benign[cnt,] = 0 
@@ -47,6 +51,7 @@ class CNN_tensor():
     MAL_TRAIN = int(round(total_len * 0.8))
     MAL_TEST = total_len - MAL_TRAIN
 
+    # 악성코드 이미지를 저장할 자료형 정의
     X_train_malware = np.empty((MAL_TRAIN, 28, 28, 1), dtype = "float32")
     y_train_malware = np.empty((MAL_TRAIN,), dtype = "uint8")
     X_test_malware = np.empty((MAL_TEST, 28, 28, 1), dtype = "float32")
@@ -56,6 +61,7 @@ class CNN_tensor():
     for i in m:
       im = Image.open(i).convert("L")
       out = im.resize((28,28))
+    # 이미지를 불러온 후 크기를 28 x 28로 조정
 
       if cnt < MAL_TRAIN:
         X_train_malware[cnt,:,:,0] = out
@@ -68,6 +74,7 @@ class CNN_tensor():
       if cnt == (MAL_TRAIN+MAL_TEST):
         break
 
+    # train set & test set
     X_train = np.empty(((BEN_TRAIN+MAL_TRAIN), 28, 28, 1), dtype = "float32")
     y_train = np.empty(((BEN_TRAIN+MAL_TRAIN),), dtype = "uint8")
     X_test = np.empty(((BEN_TEST+MAL_TEST),  28, 28, 1), dtype = "float32")
@@ -87,12 +94,14 @@ class CNN_tensor():
     X_test = X_test.astype("float32")
     Y_test = np_utils.to_categorical(y_test, nb_classes)
 
+    # Last dataset
     self.x_train  = X_train
     self.x_test   = X_test
     self.y_train  = Y_train
     self.y_test   = Y_test
 
 
+    # Deep CNN 실행
   def do_cnn(self):
 
     learning_rate = 0.001
@@ -100,11 +109,14 @@ class CNN_tensor():
     batch_size = 100
     keep_prob = tf.compat.v1.placeholder(tf.float32)
 
-    # input place holders
-    X = tf.compat.v1.placeholder(tf.float32, [None, 28, 28 ,1])
+    # Input place holders
+    # placeholder : 데이터셋을 담을 computational graph
+    X = tf.compat.v1.placeholder(tf.float32, [None, 28, 28 ,1]) # image 28 X 28 X 1
     Y = tf.compat.v1.placeholder(tf.float32, [None, 2])  
 
-    W1 = tf.Variable(tf.random.normal([3, 3, 1, 32], stddev=0.01))
+    # Layering
+    # variable : 가중치 & 바이어스를 담을 computational graph
+    W1 = tf.Variable(tf.random.normal([3, 3, 1, 32], stddev=0.01)) # 3 X 3 크기의 필터를 이용해 32개의 출력값을 얻기 위함
     L1 = tf.nn.conv2d(input=X, filters=W1, strides=[1, 1, 1, 1], padding='SAME')
     L1 = tf.nn.relu(L1)
     L1 = tf.nn.max_pool2d(input=L1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
@@ -123,6 +135,8 @@ class CNN_tensor():
     L3 = tf.nn.dropout(L3, rate=1 - (keep_prob))
     L3_flat = tf.reshape(L3, [-1, 128 * 4 * 4])
 
+    # Fully connected(FC, Dense) layer
+    # Final FC 128X4X4 inputs -> 625 outputs
     W4 = tf.compat.v1.get_variable("W4", shape=[128 * 4 * 4, 625], initializer=tf.compat.v1.keras.initializers.VarianceScaling(scale=1.0, mode="fan_avg", distribution="uniform"))
     b4 = tf.Variable(tf.random.normal([625]))
     L4 = tf.nn.relu(tf.matmul(L3_flat, W4) + b4)
@@ -132,9 +146,11 @@ class CNN_tensor():
     b5 = tf.Variable(tf.random.normal([2]))
     logits = tf.matmul(L4, W5) + b5
 
+    # Define cost/loss & optimizer
     cost = tf.reduce_mean(input_tensor=tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=Y))
     optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 
+    # Initialize
     sess = tf.compat.v1.Session()
     sess.run(tf.compat.v1.global_variables_initializer())
 
