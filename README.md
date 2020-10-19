@@ -58,7 +58,7 @@ Project
     ㄴㅡㅡ samples  
   
         ㄴㅡㅡ malwares  
-      ㄴㅡㅡ normal  
+        ㄴㅡㅡ normal  
   ㄴㅡㅡ images  
       ㄴㅡㅡ malwares  
       ㄴㅡㅡ normal  
