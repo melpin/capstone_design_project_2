@@ -32,11 +32,11 @@ pip install pefile
 
 peutils 408 line #  encode cp-949 > utf8 modify
 
-                   sig_f =open(filename, 'rt', encoding='UTF8')
-                    #sig_f = open( filename, 'rt' )
+sig_f =open(filename, 'rt', encoding='UTF8')  
+sig_f = open( filename, 'rt' )  
 
-ref https://github.com/cylance/PyPackerDetect
-
+ref https://github.com/cylance/PyPackerDetect  
+  
 =======
   
   
