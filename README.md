@@ -54,6 +54,7 @@ tensorflow-cpu 최신버전에서 사용가능
 => tf_upgrade_v2 --infile (origin_file.py) --outfile (after_file.py)  
 get_image.py와 같이 경로를 만들어 주어야 파일을 찾을 수 있도록 만듦  
 아래와 같이 디렉토리 생성  
+'''
 Project(folder)  
   ㄴㅡㅡ samples  
   
@@ -66,5 +67,5 @@ Project(folder)
   ㄴㅡㅡ engine  
   
       ㄴㅡㅡ code (code 파일)  
-      
+'''
 >>>>>>> 5f46c9308ed831ce538a2a2bba29ba7b14b91193
