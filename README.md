@@ -50,6 +50,17 @@ get_image.py
   
 get_image_modeling_v2.py  
 tensorflow-cpu 최신버전에서 사용가능  
-코드를 Tensorflow 1.x 버전에서 Tensorflow 2.x 버전으로 변경하고 싶으면 명령어 창에 아래와 같이 작성  
-=> tf_upgrade_v2 --infile (origin_file.py) --outfile (after_file.py)
+코드를 Tensorflow 1.x 버전에서 Tensorflow 2.x 버전으로 변경하고 싶으면 명령어 창에 아래와 같이 작성    
+=> tf_upgrade_v2 --infile (origin_file.py) --outfile (after_file.py)  
+get_image.py와 같이 경로를 만들어 주어야 파일을 찾을 수 있도록 만듦  
+아래와 같이 디렉토리 생성  
+Project  
+  ㄴㅡㅡ samples  
+      ㄴㅡㅡ malwares  
+      ㄴㅡㅡ normal  
+  ㄴㅡㅡ images  
+      ㄴㅡㅡ malwares  
+      ㄴㅡㅡ normal  
+  ㄴㅡㅡ engine  
+      ㄴㅡㅡ code (code 파일)  
 >>>>>>> 5f46c9308ed831ce538a2a2bba29ba7b14b91193
