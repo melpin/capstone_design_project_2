@@ -17,9 +17,11 @@ import lief
 import hashlib
 import time
 import numpy as np
+import csv
 from sklearn.feature_extraction import FeatureHasher
 
 #add user engine
+from engine.ngram import ngram_parser
 import engine.PyPackerDetect.DetectPacker
 from engine.richheader import richlibrary
 
@@ -564,6 +566,29 @@ class RichHeader_features(FeatureType):
         raw_list.append(raw_obj['error'])
         
         return np.hstack(raw_list).astype(np.float32)
+
+class NGRAM_features(FeatureType):
+    ''' Extracts doubt ngram count '''
+
+    name = '4gram'
+    dim = 100 # maybe modify header ranking
+
+    def __init__(self):
+        super(FeatureType, self).__init__()
+        self.imports = ""
+        with open("./engine/ngram/4gram_database.csv", newline='') as db:
+            headerdata = csv.reader(db, delimiter=',', quotechar='|')
+            self.headers =  list(headerdata)[0]
+            
+    def raw_features(self, bytez, lief_binary):
+        byte_code = ngram_parser.get_opcode_data(bytez)
+        grams = ngram_parser.n_grams(4, byte_code)
+        gram_dict = ngram_parser.get_ngram_dict(self.headers, grams)
+        
+        return gram_dict
+
+    def process_raw_features(self, raw_obj):
+        return np.hstack([raw_obj[h] for h in self.headers]).astype(np.float32)
 
 def GenerateTime(lief_binary):
     fileheader = lief_binary.header

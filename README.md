@@ -18,11 +18,20 @@ ai_entropy.py(ember entropy code) : 기본 내장 라이브러리 외에 설치�
 => pip install sklearn  
 => python -m pip install --upgrade pip 도 한번 해주세요~  
 
+richlibrary.py  
+byte data 받을수 있도록 수정함
+
 richheader.py   
 sample directory의 파일들로부터 추출한 richheader count & pid를 richd.csv로 출력  
 with richlibrary.py, prodids.py  
 
 ngram.py   
+require
+pip install capstone  
+
+header database file  
+./engine/ngram/4gram_database.csv  
+
 sample directory의 파일들로부터 추출한 segment count & 4-gram opcodes를 4-gram.csv로 출력  
 <<<<<<< HEAD
 
@@ -67,4 +76,4 @@ Project
     ㄴㅡㅡ code (code 파일)  
 </code>
 </pre>
->>>>>>> 5f46c9308ed831ce538a2a2bba29ba7b14b91193
+

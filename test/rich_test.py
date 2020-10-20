@@ -1,3 +1,6 @@
+# this file directory in /
+# current directory in /test
+# maybe this test file run, move dir
 
 import hashlib
 import os

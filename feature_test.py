@@ -181,9 +181,11 @@ class PEFeatureExtractor(object):
 
     def __init__(self, feature_version=2):
         self.features = [
+            #test class add
             #StringExtractor(),
             PackerExtractor(),
-            RichHeader_features()
+            #RichHeader_features(),
+            NGRAM_features()
         ]
         if feature_version == 1:
             if not lief.__version__.startswith("0.8.3"):
@@ -211,7 +213,6 @@ class PEFeatureExtractor(object):
             lief_binary = None
         except Exception:  # everything else (KeyboardInterrupt, SystemExit, ValueError):
             raise
-
         features = {"sha256": hashlib.sha256(bytez).hexdigest()}
         features.update({fe.name: fe.raw_features(bytez, lief_binary) for fe in self.features})
         
@@ -230,7 +231,7 @@ class PEFeatureExtractor(object):
 
 #add module
 
-import engine.PyPackerDetect.DetectPacker
+from engine.PyPackerDetect import DetectPacker
 
 class PackerExtractor(FeatureType):
     ''' Extracts doubt packer count '''
@@ -242,7 +243,7 @@ class PackerExtractor(FeatureType):
         super(FeatureType, self).__init__()
 
     def raw_features(self, bytez, lief_binary):
-        report = engine.PyPackerDetect.DetectPacker.CheckForPackersInMemory(bytez)
+        report = DetectPacker.CheckForPackersInMemory(bytez)
         
         return {
             'detections': report.detections,
@@ -311,6 +312,34 @@ class RichHeader_features(FeatureType):
         
         return np.hstack(raw_list).astype(np.float32)
 
+from engine.ngram import ngram_parser
+import csv
+
+
+class NGRAM_features(FeatureType):
+    ''' Extracts doubt ngram count '''
+
+    name = '4gram'
+    dim = 100 # maybe modify header ranking
+
+    def __init__(self):
+        super(FeatureType, self).__init__()
+        self.imports = ""
+        with open("./engine/ngram/4gram_database.csv", newline='') as db:
+            headerdata = csv.reader(db, delimiter=',', quotechar='|')
+            self.headers =  list(headerdata)[0]
+            
+    def raw_features(self, bytez, lief_binary):
+        byte_code = ngram_parser.get_opcode_data(bytez)
+        grams = ngram_parser.n_grams(4, byte_code)
+        gram_dict = ngram_parser.get_ngram_dict(self.headers, grams)
+        
+        return gram_dict
+
+    def process_raw_features(self, raw_obj):
+        return np.hstack([raw_obj[h] for h in self.headers]).astype(np.float32)
+
+
 
 def running_sample(file_data, feature_version=2):
     """
@@ -324,9 +353,10 @@ def running_sample(file_data, feature_version=2):
 if __name__ == "__main__":
     print("run main")
     path = "C:\\Users\\melpin5378\\Desktop\\python_test\\test_bin\\HxD.exe"
-    if os.path.exists(path):
+    path2 = "./samples/malware/0a0aca89c3064b40f78badadeb32c56b"
+    if os.path.exists(path2):
         print("read file")
-        file_data = open(path, "rb").read()
+        file_data = open(path2, "rb").read()
         print("train start")
         final_features = running_sample(file_data)
         #print(final_features)
