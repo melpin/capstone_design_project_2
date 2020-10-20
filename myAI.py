@@ -19,9 +19,17 @@ trainsetdir = '/data/myAI/dataset/trainset/'
 trainsetlabelpath = '/data/myAI/dataset/trainset_label.csv'
 trainsetfeaturepath = '/data/myAI/dataset/features.jsonl'
 
+import time
 
+start = time.time()
 extractor = extractfeature.Extractor(trainsetdir, trainsetlabelpath, trainsetfeaturepath, r)
 extractor.run()
+
+end = time.time()
+
+print("done")
+with open("result.txt", "w") as f:
+	f.write("result runtime : ", end - start, " sec")
 #extracte process
 
 """
