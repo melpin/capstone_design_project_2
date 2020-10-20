@@ -77,3 +77,11 @@ Project
 </code>
 </pre>
 
+"""
+total requirement
+pip install pefile
+pip install capstone
+pip install --index-url https://lief-project.github.io/packages lief
+pip install numpy
+pip install sklearn
+"""

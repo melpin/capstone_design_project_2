@@ -8,16 +8,20 @@ import utility
 r = []
 r.append(features.ByteHistogram())
 r.append(features.ByteEntropyHistogram())
-r.append(features.StringExtractor())
-r.append(features.GeneralFileInfo())
-r.append(features.HeaderFileInfo())
 r.append(features.SectionInfo())
 r.append(features.ImportsInfo())
 r.append(features.ExportsInfo())
+r.append(features.GeneralFileInfo())
+r.append(features.HeaderFileInfo())
+r.append(features.StringExtractor())
+r.append(features.DataDirectories())
+r.append(features.PackerExtractor())
+r.append(features.RichHeader_features())
+r.append(features.NGRAM_features())
 
-trainsetdir = '/data/myAI/dataset/trainset/'
-trainsetlabelpath = '/data/myAI/dataset/trainset_label.csv'
-trainsetfeaturepath = '/data/myAI/dataset/features.jsonl'
+trainsetdir = './sample/trainset/'
+trainsetlabelpath = './sample/label.csv'
+trainsetfeaturepath = './sample/features.jsonl'
 
 import time
 

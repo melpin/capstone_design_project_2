@@ -571,7 +571,7 @@ class NGRAM_features(FeatureType):
     ''' Extracts doubt ngram count '''
 
     name = '4gram'
-    dim = 100 # maybe modify header ranking
+    dim = 500 # maybe modify header ranking
 
     def __init__(self):
         super(FeatureType, self).__init__()
