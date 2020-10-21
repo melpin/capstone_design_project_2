@@ -32,7 +32,6 @@ def main():
 	import time
 
 	start = time.strftime('%m-%d, %H:%M:%S', time.localtime(time.time()))
-    
 	#extractor = extractfeature.Extractor(trainsetdir, trainsetlabelpath, trainsetfeaturepath, r)
 	#extractor.run()
 
@@ -45,7 +44,7 @@ def main():
 	import email_util
 
 	subject = "capstone2 debug info"
-	message = "process done\n"
+	message = "parsing done\n"
 	message += "runtime check\n"
 	message += "start time : "+start + "\n"
 	message += "end time : "+end + "\n"

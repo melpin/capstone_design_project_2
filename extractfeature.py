@@ -33,9 +33,9 @@ class Extractor:
 
         except KeyboardInterrupt:
             sys.exit()
-        except Exception as e:  
+        except Exception as e:
             print('errror exception')            
-
+            print(e)
             return None
 
         return feature
@@ -59,6 +59,7 @@ class Extractor:
         error = 0
 
         extractor_iterator = ((sample) for idx, sample in enumerate(utility.directory_generator(self.datadir)))
+        
         with jsonlines.open(self.output, 'w') as f:
             for x in tqdm.tqdm(pool.imap_unordered(self.extract_unpack, extractor_iterator), total=end):
                 if not x:
