@@ -6,8 +6,7 @@ import sys, struct
 try:
     import prodids
 except:
-    print("[.] Could not find product ID database.")
-    HAVE_PIDS = False
+    from engine.richheader import prodids
 
 class FileSizeError(Exception):
     pass
