@@ -12,14 +12,11 @@ class PEIDDetector(PackerDetector):
         
         try:
             if (self.config["UseLargePEIDDatabase"]):
-                self.signatures = peutils.SignatureDatabase('deps/peid/signatures_long.txt')
-            else:
-                self.signatures = peutils.SignatureDatabase('deps/peid/signatures_short.txt')
-        except:
-            if (self.config["UseLargePEIDDatabase"]):
                 self.signatures = peutils.SignatureDatabase(PyPackerDetecter_path+'\\deps\\peid\\signatures_long.txt')
             else:
                 self.signatures = peutils.SignatureDatabase(PyPackerDetecter_path+'\\deps\\peid\\signatures_short.txt')
+        except:
+            print("error")
 
     def Run(self, pe, report):
         if (not self.config["CheckForPEIDSignatures"]):
