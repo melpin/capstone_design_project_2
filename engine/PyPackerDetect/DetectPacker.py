@@ -2,7 +2,7 @@ import sys
 import os
 
 PyPackerDetecter_path = os.path.abspath("./engine/PyPackerDetect")
-print(PyPackerDetecter_path)
+
 if PyPackerDetecter_path not in sys.path:
     sys.path.append(PyPackerDetecter_path)
 
