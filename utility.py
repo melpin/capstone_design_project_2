@@ -45,7 +45,12 @@ class FeatureType:
             'exports': features.ExportsInfo(),
             'general': features.GeneralFileInfo(),
             'header': features.HeaderFileInfo(),
-            'strings': features.StringExtractor()
+            'strings': features.StringExtractor(),
+            'datadirectories': features.DataDirectories(),
+            'Packer': features.PackerExtractor(),
+            'richheader': features.RichHeader_features(),
+            '4gram': features.NGRAM_features()
+            
         }
 
     def parsing(self, lists):

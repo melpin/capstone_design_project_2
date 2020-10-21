@@ -84,4 +84,8 @@ pip install capstone
 pip install --index-url https://lief-project.github.io/packages lief
 pip install numpy
 pip install sklearn
+pip install jsonlines
 """
+
+#! myai routine most cover funtion model, and if __name__ == __main__ design
+#! cause tqdm multiprocess bug prevent,
