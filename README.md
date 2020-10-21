@@ -76,6 +76,7 @@ Project
     ㄴㅡㅡ code (code 파일)  
 </code>
 </pre>
+<<<<<<< HEAD
 
 """
 total requirement
@@ -89,3 +90,5 @@ pip install jsonlines
 
 #! myai routine most cover funtion model, and if __name__ == __main__ design
 #! cause tqdm multiprocess bug prevent,
+=======
+>>>>>>> f00802d268f21927063bd62bd792852f18c54c3d
