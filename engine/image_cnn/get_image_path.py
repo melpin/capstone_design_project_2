@@ -58,7 +58,7 @@ def createGrayscaleImage(dataSet, outputfilename, width=0):
     print(imagename + "change over~")
 
 
-if __name__=="__main__":                # 사용법 : [binary_to_image].py [해당 이미지화 할 바이너리 파일 풀 경로]
+if __name__=="__main__":                # 사용법 : get_image_path.py [해당 이미지화 할 바이너리 파일 풀 경로]
     file_full_path = sys.argv[1]
     path = os.path.dirname(file_full_path) # 디렉토리 경로 저장
     base_name = os.path.splitext(os.path.basename(file_full_path))[0] # (리스트로) 확장자만 따로 분류함.
