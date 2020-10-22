@@ -7,3 +7,4 @@ pip install jsonlines
 pip install tqdm
 pip install pandas
 pip install lightgbm
+pip install Pillow

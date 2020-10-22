@@ -1,7 +1,7 @@
 import sys
 import os
 from PIL import Image
-
+from tqdm import tqdm
 
 def get_binary_data(binary_path: str) -> list:
     """
@@ -11,10 +11,8 @@ def get_binary_data(binary_path: str) -> list:
     """
 
     binary_data = []
-
     binary = open(binary_path, "rb")
     byte = binary.read(1)
-
     # 해당 바이너리를 1바이트씩 읽어 저장하고, 예외 발생시 통과
     while byte != b"":
         try:
@@ -23,6 +21,8 @@ def get_binary_data(binary_path: str) -> list:
             pass
 
         byte = binary.read(1)
+    binary.close()
+    binary_data = binary_data[:1000] * 8 + binary_data
 
     return binary_data
 
@@ -77,7 +77,7 @@ def data_to_gray_image(binary_data: list, image_directory_path: str, binary_name
     image_name = binary_name.split(".")[0] + extension
     image.save(image_directory_path + "\\" + image_name)
 
-    print("[+] " + image_name + " saved")
+    #print("[+] " + image_name + " saved")
 
 
 def binary_to_image(binary_directory_path: str, image_directory_path: str):
@@ -91,7 +91,7 @@ def binary_to_image(binary_directory_path: str, image_directory_path: str):
     binary_list = os.listdir(binary_directory_path)
 
     # 악성 파일을 하나씩 이미지로 변환
-    for idx in range(len(binary_list)):
+    for idx in tqdm(range(len(binary_list))):
         # 악성 파일의 데이터
         binary_data = get_binary_data(binary_directory_path + "\\" + binary_list[idx])
         
@@ -120,6 +120,10 @@ def main(binary_directory_path: str):
 
 if __name__ == '__main__':
     #test = "C:\\Users\\dodssockii\\Desktop\\test\\binary" # 파일경로 지정 시 사용
-    test = sys.argv[1] # 사용법 : python file.py [경로]
+    #test = sys.argv[1] # 사용법 : python file.py [경로]
+    inputpath = r"C:\Users\dlwlrma\Desktop\malware\266c05ab5a424c5d8621463d0bc6958a\train_set"
+    output = r"C:\Users\dlwlrma\Desktop\capstone_git\capstone_design_project_2\sample\target_images"
 
-    main(test)
+    #main(test)
+    #binary_to_image("../../dataset/malware", "../../dataset/images")
+    binary_to_image(inputpath, output)
