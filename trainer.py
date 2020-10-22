@@ -65,6 +65,106 @@ class Gradientboosted(ModelType):
         if self.model:
             self.model.save_model(os.path.join(self.datadir, 'GradientBoosted_model.txt')) 
         #logger.debug('[GradientBoosted] finish save')
+
+from sklearn.ensemble import forest as rf
+import xgboost as xgb
+import lightgbm as lgb
+
+class X_Gradientboosted(ModelType):
+    """
+    Train the XGBoost model from the vectorized features
+    """
+
+    def __init__(self, datadir, rows, dim):
+        self.datadir = datadir
+        self.rows = rows
+        self.dim = dim
+        self.model = None
+
+    """
+    Run Gradientboost algorithm which in XGBoost
+    """
+
+    def train(self):
+        """
+        Train
+        """
+        X, y = ember.read_vectorized_features(self.datadir, self.rows, self.dim)
+
+        # train
+        xgb_dataset = xgb.Dataset(X, y)
+
+        params = {"learning_rate": 0.03,
+                  "n_estimators": 3000,
+                  "max_depth": 11,
+                  "min_child_weight": 9,
+                  "gamma": 0.2,
+                  "subsample": 1,
+                  "colsample_bytree": 0.4,
+                  "objective": 'binary:logistic',
+                  "nthread": -1,
+                  "scale_pos_weight": 1,
+                  "reg_alpha": 0.6,
+                  "reg_lambda": 3,
+                  "seed": 42}
+
+        self.model = xgb.train(params, xgb_dataset)
+
+    def save(self):
+        """
+        Save a model using a pickle package
+        """
+        print('[X_GradientBoosted] start save')
+        # logger.debug(self.model)
+        if self.model:
+            self.model.save_model(os.path.join(self.datadir, 'X_GradientBoosted_model.txt'))
+            # logger.debug('[X_GradientBoosted] finish save')
+
+
+class RandomForest(ModelType):
+    """
+    Train the RandomForest model from the vectorized features
+    """
+
+    def __init__(self, datadir, rows, dim):
+        self.datadir = datadir
+        self.rows = rows
+        self.dim = dim
+        self.model = None
+
+    """
+    Run Gradientboost algorithm which in XGBoost
+    """
+
+    def train(self):
+        """
+        Train
+        """
+        X, y = ember.read_vectorized_features(self.datadir, self.rows, self.dim)
+
+        # train
+        rf_dataset = rf.Dataset(X, y)
+
+        params = {
+            "n_estimators": 100,
+            "min_samples_leaf": 25,
+            "max_features": 0.5,
+            "n_jobs": -1,
+            "oob_score": False
+        }
+        # n_estimators=100, min_samples_leaf=25, max_features=0.5, n_jobs=-1, oob_score=False
+
+        self.model = rf.train(params, rf_dataset)
+
+    def save(self):
+        """
+        Save a model using a pickle package
+        """
+        print('[RandomForest] start save')
+        # logger.debug(self.model)
+        if self.model:
+            self.model.save_model(os.path.join(self.datadir, 'RandomForest_model.txt'))
+            # logger.debug('[RandomForest] finish save')
   
 class Trainer:
     def __init__(self, jsonlpath, output):
@@ -125,4 +225,12 @@ class Trainer:
         gradientboostmodel = Gradientboosted(self.output, self.rows, self.dim)
         gradientboostmodel.train()
         gradientboostmodel.save()
+        
+        xgbosstsmodel = X_Gradientboosted(self.output, self.rows, self.dim)
+        xgbosstsmodel.train()
+        xgbosstsmodel.save()
+        
+        rfmodel = RandomForest(self.output, self.rows, self.dim)
+        rfmodel.train()
+        rfmodel.save()
 
