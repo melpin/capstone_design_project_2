@@ -114,7 +114,7 @@ class Trainer:
         """
         Training
         """
-        # self.removeExistFile()
+        #self.removeExistFile()
         self.update_rows()
         if self.vectorize() == -1: 
             return

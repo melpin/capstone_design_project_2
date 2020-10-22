@@ -550,11 +550,11 @@ class RichHeader_features(FeatureType):
         rich_dict = dict()
         for i in range(1, self.dim):
             rich_dict[i] = 0;
+        rich_dict['error'] = 0
 
         if(rich_data['error'] < 0):
             rich_dict['error'] = rich_data['error']
             return rich_dict
-
 
         for lis in rich_data['cmpids']:
             rich_dict[lis['pid']] = lis['cnt']
@@ -562,8 +562,15 @@ class RichHeader_features(FeatureType):
         return rich_dict
 
     def process_raw_features(self, raw_obj):
-        raw_list = [raw_obj[i] for i in range (1, self.dim)]
-        raw_list.append(raw_obj['error'])
+
+        try:
+            raw_list = [raw_obj[i] for i in range (1, self.dim)]
+        except:
+            raw_list = [raw_obj[str(i)] for i in range (1, self.dim)]
+        try:
+            raw_list.append(raw_obj["error"])
+        except:
+            raw_list.append(0)
         
         return np.hstack(raw_list).astype(np.float32)
 

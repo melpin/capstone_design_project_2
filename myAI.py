@@ -1,11 +1,13 @@
 import tqdm
 import features
 import extractfeature
-#import trainer
+import trainer
 #import predictor
 import utility
+import time
+import email_util
 
-def main():
+def parsing():
 
 	r = []
 	r.append(features.ByteHistogram())
@@ -29,35 +31,43 @@ def main():
 	testlabel = "./dataset/testlabel.csv"
 	testresult = "./dataset/features.jsonl"
 
-	import time
-
 	start = time.strftime('%m-%d, %H:%M:%S', time.localtime(time.time()))
-    
-	#extractor = extractfeature.Extractor(trainsetdir, trainsetlabelpath, trainsetfeaturepath, r)
-	#extractor.run()
-
-	extractor = extractfeature.Extractor(testdir, testlabel, testresult, r)
+	extractor = extractfeature.Extractor(trainsetdir, trainsetlabelpath, trainsetfeaturepath, r)
 	extractor.run()
-	#test extract
 
+	#extractor = extractfeature.Extractor(testdir, testlabel, testresult, r)
+	#extractor.run()
+	#test extract
 	end = time.strftime('%m-%d, %H:%M:%S', time.localtime(time.time()))
 
-	import email_util
+
 
 	subject = "capstone2 debug info"
-	message = "process done\n"
+	message = "parsing done\n"
 	message += "runtime check\n"
 	message += "start time : "+start + "\n"
 	message += "end time : "+end + "\n"
-	#email_util.debugmail(subject, message)
+	email_util.debugmail(subject, message)
 	#email alram routine
 
-"""
-modeldir = '/data/myAI/dataset/aimodel/'
-train = trainer.Trainer(trainsetfeaturepath, modeldir)
-train.run()
-#train process
-"""
+def train():
+    modeldir = './sample/aimodel/'
+    trainsetfeaturepath = './sample/features.jsonl'
+    
+    start = time.strftime('%m-%d, %H:%M:%S', time.localtime(time.time()))
+    train = trainer.Trainer(trainsetfeaturepath, modeldir)
+    train.run()
+    #train process
+
+    end = time.strftime('%m-%d, %H:%M:%S', time.localtime(time.time()))
+
+    subject = "capstone2 debug info"
+    message = "parsing done\n"
+    message += "runtime check\n"
+    message += "start time : "+start + "\n"
+    message += "end time : "+end + "\n"
+    email_util.debugmail(subject, message)
+    #email alram routine
 
 """
 featurelist = '/data/myAI/dataset/features.jsonl'
@@ -74,4 +84,4 @@ predict.run()
 """
 
 if __name__ == '__main__':
-    main()
+    train()

@@ -1,0 +1,9 @@
+pip install pefile
+pip install capstone
+pip install --index-url https://lief-project.github.io/packages lief
+pip install numpy
+pip install sklearn
+pip install jsonlines
+pip install tqdm
+pip install pandas
+pip install lightgbm

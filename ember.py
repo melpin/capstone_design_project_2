@@ -49,7 +49,7 @@ def vectorize_subset(X_path, y_path, raw_feature_paths, nrows, features, dim):
     del X, y
 
     # Distribute the vectorization work
-    pool = multiprocessing.Pool()
+    pool = multiprocessing.Pool(4)
     argument_iterator = ((irow, raw_features_string, X_path, y_path, nrows, features, dim)
                          for irow, raw_features_string in enumerate(raw_feature_iterator(raw_feature_paths)))
     for _ in tqdm.tqdm(pool.imap_unordered(vectorize_unpack, argument_iterator), total=nrows):

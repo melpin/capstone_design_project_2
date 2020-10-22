@@ -29,13 +29,13 @@ class Extractor:
             binary = open(fullpath, 'rb').read()
             feature = extractor.raw_features(binary)
             feature.update({"sha256": sample}) # sample name(hash)
-            feature.update({"label" : self.data[self.data.hash==sample].values[0][1]}) #label
+            feature.update({"label" : self.data[self.data.hash==sample[:-4]].values[0][1]}) #label
 
         except KeyboardInterrupt:
             sys.exit()
-        except Exception as e:  
+        except Exception as e:
             print('errror exception')            
-
+            print(e)
             return None
 
         return feature
@@ -59,6 +59,7 @@ class Extractor:
         error = 0
 
         extractor_iterator = ((sample) for idx, sample in enumerate(utility.directory_generator(self.datadir)))
+        
         with jsonlines.open(self.output, 'w') as f:
             for x in tqdm.tqdm(pool.imap_unordered(self.extract_unpack, extractor_iterator), total=end):
                 if not x:
