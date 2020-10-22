@@ -2,10 +2,11 @@ import tqdm
 import features
 import extractfeature
 import trainer
-#import predictor
+import predictor
 import utility
 import time
 import email_util
+
 
 def parsing():
 
@@ -50,7 +51,7 @@ def parsing():
 	message += "runtime check\n"
 	message += "start time : "+start + "\n"
 	message += "end time : "+end + "\n"
-	email_util.debugmail(subject, message)
+	#email_util.debugmail(subject, message)
 	#email alram routine
 
 def train():
@@ -65,26 +66,29 @@ def train():
     end = time.strftime('%m-%d, %H:%M:%S', time.localtime(time.time()))
 
     subject = "capstone2 debug info"
-    message = "parsing done\n"
+    message = "model save done\n"
     message += "runtime check\n"
     message += "start time : "+start + "\n"
     message += "end time : "+end + "\n"
     email_util.debugmail(subject, message)
     #email alram routine
 
-"""
-featurelist = '/data/myAI/dataset/features.jsonl'
-features = utility.readonelineFromjson(featurelist)
-feature_parser = utility.FeatureType()
-featureobjs = feature_parser.parsing(features)
+def predict():
+    featurelist = './sample/features.jsonl' # parsed data feature input file
+    features = utility.readonelineFromjson(featurelist)
+    feature_parser = utility.FeatureType()
+    featureobjs = feature_parser.parsing(features)
 
-modelpath = '/data/myAI/dataset/aimodel/GradientBoosted_model.txt'
-testdir = '/data/myAI/dataset/testset/'
-outputpath = '/data/myAI/dataset/result.csv'
-predict = predictor.Predictor(modelpath, testdir, featureobjs, outputpath)
-predict.run()
-#predict process
-"""
+    modelpath = './sample/aimodel/GradientBoosted_model.txt'
+    testdir = './sample/testset/' # data input folder
+    outputpath = './sample/result.csv'
+    predict = predictor.Predictor(modelpath, testdir, featureobjs, outputpath)
+    predict.run()
+    #predict process
+
 
 if __name__ == '__main__':
+    #parsing()
     train()
+    #predict()
+    

@@ -48,9 +48,10 @@ class Gradientboosted(ModelType):
             "num_iterations": 1000,
             "learning_rate": 0.05,
             "num_leaves": 2048,
-            "max_depth": 15,
-            "min_data_in_leaf": 50,
-            "feature_fraction": 0.5
+            "max_depth": 50,
+            "min_data_in_leaf": 1000,
+            "feature_fraction": 0.5,
+            "verbose": -1  # log option
         }
 
         self.model = lgb.train(params, lgbm_dataset)
