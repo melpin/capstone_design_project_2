@@ -32,7 +32,10 @@ def parsing():
 	testresult = "./dataset/features.jsonl"
 
 	start = time.strftime('%m-%d, %H:%M:%S', time.localtime(time.time()))
-	extractor = extractfeature.Extractor(trainsetdir, trainsetlabelpath, trainsetfeaturepath, r)
+	#extractor = extractfeature.Extractor(trainsetdir, trainsetlabelpath, trainsetfeaturepath, r)
+	#extractor.run()
+
+	extractor = extractfeature.Extractor(testdir, testlabel, testresult, r)
 	extractor.run()
 
 	#extractor = extractfeature.Extractor(testdir, testlabel, testresult, r)
