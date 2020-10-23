@@ -5,24 +5,36 @@
 
 import tensorflow as tf
 import numpy as np
+import pandas as pd
 import random
 import glob
+import os
 
 from PIL import Image
 from keras.utils import np_utils
 
-class CNN_tensor():
-    def __init__(self, image_path):
+#util
+def format_spliter(filename):
+    if "." in filename:
+        return filename.split(".")[0]
+    else:
+        return filename
 
+class CNN_tensor():
+    def __init__(self, image_path, label_path, model_path):
         self.image_path = image_path
+        self.data = pd.read_csv(label_path, names=['hash', 'y'])
+        self.model_path = model_path
+        self.file_path = self.model_path + "/cnn_model"
+        
     # image 가져오기
     def load_images(self):
         nb_classes = 2 # 0,1 - num class 개수
-        binary_list = self.image_path
+        binary_list = glob.glob(self.image_path+"/*.png")
 
         # 정상 프로그램 이미지 목록을 받아옴
         total_len = len(binary_list)
-        BEN_TRAIN = int(round(total_len * 0.8))
+        BEN_TRAIN = int(round(total_len * 0.7))
         BEN_TEST = total_len - BEN_TRAIN
 
         # 정상 프로그램 이미지를 저장할 자료형 정의
@@ -33,20 +45,24 @@ class CNN_tensor():
         cnt = 0
 
         # 이미지를 불러온 후 크기를 28 x 28로 조정
-        for i in binary_list:
-          im = Image.open(i).convert("L")
-          out = im.resize((28,28)) 
+        for file_name in binary_list:
+            filename = file_name # test
+            
+            img_hash = format_spliter(os.path.split(filename)[1])
+            
+            im = Image.open(file_name).convert("L")
+            # filename check
+            label = self.data[self.data.hash==img_hash].values[0][1]
+            out = im.resize((28,28)) 
         
-          if cnt < BEN_TRAIN: 
-            X_train_benign[cnt,:,:,0] = out
-            y_train_benign[cnt,] = 0 
-          else:
-            X_test_benign[cnt-BEN_TRAIN,:,:,0] = out
-            y_test_benign[cnt-BEN_TRAIN,] = 0 
-
-        cnt = cnt+1
-        if cnt == (BEN_TRAIN+BEN_TEST):
-            break
+            if cnt < BEN_TRAIN: 
+                X_train_benign[cnt,:,:,0] = out
+                y_train_benign[cnt,] = label # 0 is normal, 1 is malware, tag set
+            else:
+                X_test_benign[cnt-BEN_TRAIN,:,:,0] = out
+                y_test_benign[cnt-BEN_TRAIN,] = label
+                
+            cnt = cnt+1
         
         y_train_benign = np.zeros(BEN_TRAIN,)
         y_test_benign = np.zeros(BEN_TEST,)
@@ -66,9 +82,10 @@ class CNN_tensor():
 
     # Deep CNN 실행
     def train(self):
-        training_epochs = 30
+        training_epochs = 100
         batch_size = 100
         learning_rate = 0.001
+        tf.compat.v1.disable_eager_execution() # for tensorflow1 code run in tensor 2
         keep_prob = tf.compat.v1.placeholder(tf.float32)
 
         # Input place holders
@@ -141,13 +158,23 @@ class CNN_tensor():
             print('Epoch:', '%04d' % (epoch + 1), 'cost =', '{:.9f}'.format(avg_cost))
 
         print('Learning Finished!')
-        saver = tf.train.Saver()
-
-        saver.save(sess, './my_test_model', global_step=1000)
-
-
-    def predict_do(self):
         
+        #saver = tf.compat.v1.train.Saver()
+        #saver.save(sess, self.file_path, global_step = 1000)
+        #sess file save
+        
+        # Test model and check accuracy
+        correct_prediction = tf.equal(tf.argmax(input=logits, axis=1), tf.argmax(input=Y, axis=1))
+        accuracy = tf.reduce_mean(input_tensor=tf.cast(correct_prediction, tf.float32))
+        acc = sess.run(accuracy, feed_dict={X: self.x_test, Y: self.y_test, keep_prob: 1})
+        print("acc : ", acc)
+        
+    def predict_do(self):
+        new_sess = tf.compat.v1.Session()
+        saver = tf.compat.v1.train.import_meta_graph(self.file_path+'-1000.meta')
+        saver.restore(new_sess,tf.train.latest_checkpoint(self.model_path))
+        #load model
+
         # Test model and check accuracy
         correct_prediction = tf.equal(tf.argmax(input=logits, axis=1), tf.argmax(input=Y, axis=1))
         accuracy = tf.reduce_mean(input_tensor=tf.cast(correct_prediction, tf.float32))
@@ -157,11 +184,11 @@ class CNN_tensor():
 
 
 def main():
-    path = ""
-    cn = CNN_tensor(path)
+    path = "./sample/target_images"
+    label_path = ""
+    cn = CNN_tensor(path, label_path)
     cn.load_images()
     cn.train()
-    
 
 if __name__ == '__main__':
     main()

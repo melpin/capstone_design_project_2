@@ -29,6 +29,7 @@ class Extractor:
             binary = open(fullpath, 'rb').read()
             feature = extractor.raw_features(binary)
             feature.update({"sha256": sample}) # sample name(hash)
+            # file name check need modify
             feature.update({"label" : self.data[self.data.hash==sample[:-4]].values[0][1]}) #label
 
         except KeyboardInterrupt:

@@ -8,9 +8,12 @@ import sys
 import pickle
 import jsonlines
 import utility
-from sklearn.ensemble import RandomForestClassifier
-import lightgbm as lgb
+#from sklearn.ensemble import RandomForestClassifier
 from lightgbm import plot_importance
+from sklearn.ensemble import forest as rf
+import xgboost as xgb
+import lightgbm as lgb
+
 
 class ModelType(object):
     def train(self):
@@ -65,10 +68,6 @@ class Gradientboosted(ModelType):
         if self.model:
             self.model.save_model(os.path.join(self.datadir, 'GradientBoosted_model.txt')) 
         #logger.debug('[GradientBoosted] finish save')
-
-from sklearn.ensemble import forest as rf
-import xgboost as xgb
-import lightgbm as lgb
 
 class X_Gradientboosted(ModelType):
     """
@@ -219,18 +218,12 @@ class Trainer:
         self.update_rows()
         if self.vectorize() == -1: 
             return
-
-        #logger.debug('Start Gradientboosted train')
-        # Training
-        gradientboostmodel = Gradientboosted(self.output, self.rows, self.dim)
-        gradientboostmodel.train()
-        gradientboostmodel.save()
-        
-        xgbosstsmodel = X_Gradientboosted(self.output, self.rows, self.dim)
-        xgbosstsmodel.train()
-        xgbosstsmodel.save()
-        
-        rfmodel = RandomForest(self.output, self.rows, self.dim)
-        rfmodel.train()
-        rfmodel.save()
+        class_list = [
+        Gradientboosted(self.output, self.rows, self.dim)
+        #X_Gradientboosted(self.output, self.rows, self.dim)
+        #RandomForest(self.output, self.rows, self.dim)
+        ]
+        for cl in class_list:
+            cl.train()
+            cl.save()
 

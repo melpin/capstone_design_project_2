@@ -1,3 +1,4 @@
+pip install --upgrade pip
 pip install pefile
 pip install capstone
 pip install --index-url https://lief-project.github.io/packages lief
@@ -8,3 +9,6 @@ pip install tqdm
 pip install pandas
 pip install lightgbm
 pip install Pillow
+pip install xgboost
+pip install --upgrade tensorflow
+pip install keras

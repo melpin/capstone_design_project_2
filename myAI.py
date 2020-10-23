@@ -70,7 +70,7 @@ def train():
     message += "runtime check\n"
     message += "start time : "+start + "\n"
     message += "end time : "+end + "\n"
-    email_util.debugmail(subject, message)
+    #email_util.debugmail(subject, message)
     #email alram routine
 
 def predict():
