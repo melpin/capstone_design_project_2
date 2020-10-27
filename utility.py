@@ -2,6 +2,7 @@ import os
 import json
 import jsonlines
 import features
+import hashlib
 
 def checkNone(_str_value):
     """
@@ -34,6 +35,15 @@ def readonelineFromjson(jsonlpath):
             del obj['appeared']
             
             return list(obj.keys())
+
+def get_file_hash(bytez = None, path = None):
+    if bytez == None:
+        data = open(path, "rb").read()
+    else:
+        data = bytez
+    
+    return hashlib.sha256(data).hexdigest()
+
 
 class FeatureType:
     def __init__(self):

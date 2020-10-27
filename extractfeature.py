@@ -15,7 +15,7 @@ class Extractor:
     def __init__(self, datadir, label, output, features):
         self.datadir = datadir
         self.output = output
-        self.data = pd.read_csv(label, names=['hash', 'y'])
+        #self.data = pd.read_csv(label, names=['hash', 'y'])
         self.features = features
 
     def extract_features(self, sample):

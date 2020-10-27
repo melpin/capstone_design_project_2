@@ -13,12 +13,7 @@ import os
 from PIL import Image
 from keras.utils import np_utils
 
-#util
-def format_spliter(filename):
-    if "." in filename:
-        return filename.split(".")[0]
-    else:
-        return filename
+
 
 class CNN_tensor():
     def __init__(self, image_path, label_path, model_path):

@@ -8,12 +8,16 @@ import sys
 import pickle
 import jsonlines
 import utility
-#from sklearn.ensemble import RandomForestClassifier
-from lightgbm import plot_importance
-from sklearn.ensemble import forest as rf
+from lightgbm import plot_importance # ?
+from sklearn.ensemble import forest as rf # ?
 import xgboost as xgb
 import lightgbm as lgb
-
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+import numpy as np
+import joblib
 
 class ModelType(object):
     def train(self):
@@ -40,10 +44,10 @@ class Gradientboosted(ModelType):
         Train
         """
         X, y = ember.read_vectorized_features(self.datadir, self.rows, self.dim)
-
+        
         # train
         lgbm_dataset = lgb.Dataset(X, y)
-
+        
         params = {
             "application": "binary",
             "boosting": "gbdt",
@@ -51,7 +55,7 @@ class Gradientboosted(ModelType):
             "num_iterations": 1000,
             "learning_rate": 0.05,
             "num_leaves": 2048,
-            "max_depth": 50,
+            "max_depth": 16,
             "min_data_in_leaf": 1000,
             "feature_fraction": 0.5,
             "verbose": -1  # log option
@@ -80,35 +84,41 @@ class X_Gradientboosted(ModelType):
         self.dim = dim
         self.model = None
 
-    """
-    Run Gradientboost algorithm which in XGBoost
-    """
-
+    #XGBoost
     def train(self):
         """
         Train
         """
-        X, y = ember.read_vectorized_features(self.datadir, self.rows, self.dim)
+        X, y= ember.read_vectorized_features(self.datadir, self.rows, self.dim)
 
-        # train
-        xgb_dataset = xgb.Dataset(X, y)
+        x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+        
+        sc = StandardScaler()
+        x_train = sc.fit_transform(x_train)
+        x_test = sc.transform(x_test)
 
-        params = {"learning_rate": 0.03,
-                  "n_estimators": 3000,
-                  "max_depth": 11,
-                  "min_child_weight": 9,
-                  "gamma": 0.2,
-                  "subsample": 1,
-                  "colsample_bytree": 0.4,
-                  "objective": 'binary:logistic',
-                  "nthread": -1,
-                  "scale_pos_weight": 1,
-                  "reg_alpha": 0.6,
-                  "reg_lambda": 3,
-                  "seed": 42}
+        self.model = xgb.XGBClassifier(silent=False,
+                                      booster='gbtree',
+                                      scale_pos_weight=1,
+                                      learning_rate=0.01,
+                                      colsample_bytree=0.4,
+                                      subsample=0.8,
+                                      objective='binary:logistic',
+                                      n_estimators=100,
+                                      max_depth=50,
+                                      gamma=10,
+                                      seed=777)
 
-        self.model = xgb.train(params, xgb_dataset)
+        #파라미터 튜닝 : https://www.kaggle.com/lifesailor/xgboost 참조
 
+        # train, Prediction
+        self.model.fit(x_train, y_train)
+        y_pred = self.model.predict(x_test)
+
+        #Accuracy
+        accuracy = accuracy_score(y_pred, y_test)
+        print("X_GradientBoosted : ", accuracy)
+    
     def save(self):
         """
         Save a model using a pickle package
@@ -116,11 +126,11 @@ class X_Gradientboosted(ModelType):
         print('[X_GradientBoosted] start save')
         # logger.debug(self.model)
         if self.model:
-            self.model.save_model(os.path.join(self.datadir, 'X_GradientBoosted_model.txt'))
+            joblib.dump(self.model, os.path.join(self.datadir, 'X_GradientBoosted_model.txt'))
+            #self.model.save_model(os.path.join(self.datadir, 'X_GradientBoosted_model.txt'))
             # logger.debug('[X_GradientBoosted] finish save')
 
-
-class RandomForest(ModelType):
+class RandomForestCF(ModelType):
     """
     Train the RandomForest model from the vectorized features
     """
@@ -131,29 +141,36 @@ class RandomForest(ModelType):
         self.dim = dim
         self.model = None
 
-    """
-    Run Gradientboost algorithm which in XGBoost
-    """
 
+    # RandomForest
     def train(self):
         """
         Train
         """
         X, y = ember.read_vectorized_features(self.datadir, self.rows, self.dim)
 
-        # train
-        rf_dataset = rf.Dataset(X, y)
+        x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
 
-        params = {
-            "n_estimators": 100,
-            "min_samples_leaf": 25,
-            "max_features": 0.5,
-            "n_jobs": -1,
-            "oob_score": False
-        }
-        # n_estimators=100, min_samples_leaf=25, max_features=0.5, n_jobs=-1, oob_score=False
+        sc = StandardScaler()
+        x_train = sc.fit_transform(x_train)
+        x_test = sc.transform(x_test)
 
-        self.model = rf.train(params, rf_dataset)
+        self.model = RandomForestClassifier(n_estimators=100,
+                                          min_samples_leaf=25,
+                                          max_features=0.5,
+                                          n_jobs=-1,
+                                          oob_score=False)
+        
+        #파라미터 튜닝 : https://injo.tistory.com/30 참조
+
+        # train, Prediction
+        self.model.fit(x_train, y_train)
+        y_pred = self.model.predict(x_test)
+
+        # Accuracy
+        from sklearn.metrics import accuracy_score
+        accuracy = accuracy_score(y_pred, y_test)
+        print("RandomForest : ", accuracy)
 
     def save(self):
         """
@@ -162,9 +179,11 @@ class RandomForest(ModelType):
         print('[RandomForest] start save')
         # logger.debug(self.model)
         if self.model:
-            self.model.save_model(os.path.join(self.datadir, 'RandomForest_model.txt'))
+            joblib.dump(self.model, os.path.join(self.datadir, 'RandomForest_model.txt'))
+            #load_model = joblib.load('RandomForest_model.txt') #predict method , 
+            #load_model.predict(X)
             # logger.debug('[RandomForest] finish save')
-  
+
 class Trainer:
     def __init__(self, jsonlpath, output):
         self.jsonlpath = jsonlpath
@@ -219,11 +238,13 @@ class Trainer:
         if self.vectorize() == -1: 
             return
         class_list = [
-        Gradientboosted(self.output, self.rows, self.dim)
-        #X_Gradientboosted(self.output, self.rows, self.dim)
-        #RandomForest(self.output, self.rows, self.dim)
+        #Gradientboosted(self.output, self.rows, self.dim),
+        X_Gradientboosted(self.output, self.rows, self.dim),
+        RandomForestCF(self.output, self.rows, self.dim)
         ]
         for cl in class_list:
             cl.train()
-            cl.save()
+            #cl.save()
+        
+        
 
