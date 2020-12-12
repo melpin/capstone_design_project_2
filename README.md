@@ -1,3 +1,5 @@
+# Malware detection with AI (LGBM)  
+
 myai.py  
 main app으로 여기서 extracture, trainer, predictor를 불러들여 실행  
 features 에 기존 ember에서 ngram, rich header, pypacker detector 여부등을 추가  
