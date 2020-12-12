@@ -1,22 +1,8 @@
+myai.py  
+main app으로 여기서 extracture, trainer, predictor를 불러들여 실행  
+features 에 기존 ember에서 ngram, rich header, pypacker detector 여부등을 추가  
+lgbm 개선을 위해 optuna 적용 
 
-#lief package install method  
-#not pip install lief < not running  
-pip install --index-url  https://lief-project.github.io/packages lief  
-#https://github.com/lief-project/LIEF/releases  
-
-malware detection with ai
-
-module decryption
-
-
-(entropy)
-sh_entropy.py => use sys, math (따로 인스톨 할 필요 없음.)  
-ai_entropy.py(ember entropy code) : 기본 내장 라이브러리 외에 설치가 필요한 것만 넣어 놓음.  
-=> pip install requests(아마 전부 있을거임.)  
-=> pip install lief  
-=> pip install numpy  
-=> pip install sklearn  
-=> python -m pip install --upgrade pip 도 한번 해주세요~  
 
 richlibrary.py  
 byte data 받을수 있도록 수정함
@@ -26,28 +12,18 @@ sample directory의 파일들로부터 추출한 richheader count & pid를 richd
 with richlibrary.py, prodids.py  
 
 ngram.py   
-require
-pip install capstone  
 
 header database file  
 ./engine/ngram/4gram_database.csv  
 
 sample directory의 파일들로부터 추출한 segment count & 4-gram opcodes를 4-gram.csv로 출력  
-<<<<<<< HEAD
-
 
 # PyPackerDetect-master  
-pip install pefile  
 
-peutils 408 line #  encode cp-949 > utf8 modify
-
+peutils 408 line #  encode cp-949 > utf8 modify  
+  
 sig_f =open(filename, 'rt', encoding='UTF8')  
 sig_f = open( filename, 'rt' )  
-
-ref https://github.com/cylance/PyPackerDetect  
-  
-=======
-  
   
 (image)  
 get_image.py  
@@ -63,6 +39,7 @@ tensorflow-cpu 최신버전에서 사용가능
 => tf_upgrade_v2 --infile (origin_file.py) --outfile (after_file.py)  
 get_image.py와 같이 경로를 만들어 주어야 파일을 찾을 수 있도록 만듦  
 아래와 같이 디렉토리 생성  
+
 <pre>
 <code>
 Project
@@ -76,19 +53,8 @@ Project
     ㄴㅡㅡ code (code 파일)  
 </code>
 </pre>
-<<<<<<< HEAD
 
-"""
-total requirement
-pip install pefile
-pip install capstone
-pip install --index-url https://lief-project.github.io/packages lief
-pip install numpy
-pip install sklearn
-pip install jsonlines
-"""
-
-#! myai routine most cover funtion model, and if __name__ == __main__ design
-#! cause tqdm multiprocess bug prevent,
-=======
->>>>>>> f00802d268f21927063bd62bd792852f18c54c3d
+ref https://github.com/lief-project/LIEF/releases  
+ref https://github.com/cylance/PyPackerDetect  
+ref https://github.com/elastic/ember
+ref https://github.com/optuna/optuna/blob/master/examples/lightgbm_simple.py
