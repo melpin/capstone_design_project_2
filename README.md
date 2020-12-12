@@ -20,7 +20,7 @@ header database file
 
 sample directory의 파일들로부터 추출한 segment count & 4-gram opcodes를 4-gram.csv로 출력  
 
-# PyPackerDetect-master  
+PyPackerDetect-master  
 
 peutils 408 line #  encode cp-949 > utf8 modify  
   
